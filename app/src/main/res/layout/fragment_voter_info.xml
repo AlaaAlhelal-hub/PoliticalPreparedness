@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.example.android.politicalpreparedness.election.VoterInfoViewModel" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lightGray"
+        tools:context="com.example.android.politicalpreparedness.MainActivity">
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/election_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_padding"
+            app:title="@{viewModel.voterInfo.election.name}"
+            android:singleLine="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/white"
+            android:background="@color/colorPrimaryDark" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/election_toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="@{viewModel.loading? View.VISIBLE : View.GONE}"
+            />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/miduem_margin"
+            app:layout_constraintTop_toBottomOf="@id/election_toolbar"
+            style="@style/CardViewStyle"
+            android:visibility="@{viewModel.loading? View.GONE : View.VISIBLE}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/miduem_padding">
+
+                <TextView
+                    android:id="@+id/election_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/default_padding"
+                    android:text="@{viewModel.voterDate.toString()}"
+                    tools:text="12 November 2055"
+                    style="@style/TextAppearance.ExtraSmall"/>
+
+
+                <TextView
+                    android:id="@+id/election_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:text="@string/election_information"
+                    style="@style/TextAppearance.Heading"/>
+
+
+
+
+
+                <LinearLayout
+                    android:id="@+id/location_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="@{viewModel.locationLink!= null ? View.VISIBLE : View.GONE}"
+                    android:layout_marginBottom="@dimen/miduem_margin">
+
+                        <TextView
+                            android:id="@+id/voting_location_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/voting_location"
+                            android:onClick="@{() -> viewModel.openLink(viewModel.locationLink)}"
+                            style="@style/TextAppearance.ExtraSmall"/>
+
+                        <TextView
+                            android:id="@+id/state_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.stateHeader}"
+                            tools:text="state header"
+                            style="@style/TextAppearance.Highlighting"/>
+
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/state_ballot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/location_group"
+                    app:layout_constraintStart_toStartOf="@id/election_date"
+                    android:text="@string/ballot_information"
+                    tools:text="state ballot"
+                    style="@style/TextAppearance.ExtraSmall"
+                    android:visibility="@{viewModel.ballotInfoLink!= null ? View.VISIBLE : View.GONE}"
+                    android:onClick="@{() -> viewModel.openLink(viewModel.ballotInfoLink)}"
+                    />
+
+
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/address_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="state_correspondence_header,address" />
+
+
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/miduem_margin">
+
+                <TextView
+                    android:id="@+id/state_correspondence_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/state_ballot"
+                    app:layout_constraintStart_toStartOf="@id/election_date"
+                    android:text="@{viewModel.correspondence}"
+                    style="@style/TextAppearance.Highlighting"
+                    tools:text="state correspondence header"/>
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/state_correspondence_header"
+                    app:layout_constraintStart_toStartOf="@id/election_date"
+                    android:text="@{viewModel.stateAddress}"
+                    style="@style/TextAppearance.Highlighting"
+                    tools:text="state address "/>
+
+
+            </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/follow_election_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/miduem_margin"
+            android:text="@string/follow_election"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{() -> viewModel.onSaveElection()}"
+            style="@style/ButtonStyle"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style parent="Theme.AppCompat.Light.DarkActionBar" name="Theme.PoliticalPreparedness">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorError">@color/red</item>
+        <item name="fontFamily">@font/cantarell</item>
+    </style>
+
+</resources>

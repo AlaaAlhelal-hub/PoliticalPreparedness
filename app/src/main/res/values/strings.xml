@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">POLITICAL PREPAREDNESS</string>
+    <string name="logo_image">Logo Image</string>
+    <string name="upcoming_elections">UPCOMING ELECTIONS</string>
+    <string name="find_my_representatives">FIND MY REPRESENTATIVES</string>
+    <string name="voter_info">Voter Info</string>
+    <string name="follow_election">FOLLOW ELECTION</string>
+    <string name="unfollow_election">UNFOLLOW ELECTION</string>
+    <string name="representative_search">Representative Search</string>
+    <string name="address_line_1">Address Line 1</string>
+    <string name="address_line_2">Address Line 2</string>
+    <string name="city">City</string>
+    <string name="zip">Zip</string>
+    <string name="use_my_location">USE MY LOCATION</string>
+    <string name="representative_photo">representative photo</string>
+    <string name="representative_official_link">representative official link</string>
+    <string name="representative_facebook_link">representative facebook link</string>
+    <string name="representative_twitter_link">representative twitter link</string>
+    <string name="saved_elections">SAVED ELECTIONS</string>
+    <string name="ok">OK</string>
+    <string name="error_title">Error</string>
+    <string name="error_message">something went wrong please try again</string>
+    <string name="representative_facebook">%s facebook page</string>
+    <string name="representative_twitter">%s twitted</string>
+    <string name="representative_www">%s web page</string>
+    <string name="ballot_information">Ballot Information</string>
+    <string name="election_information">Election Information</string>
+    <string name="voting_location">Voting Location</string>
+    <string name="home">HOME</string>
+    <string name="representaive">REPRESENTATIVE</string>
+    <string name="elections">Elections</string>
+
+</resources>
