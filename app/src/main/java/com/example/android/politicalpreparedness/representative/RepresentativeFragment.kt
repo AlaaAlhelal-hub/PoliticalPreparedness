@@ -11,11 +11,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,32 +34,34 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
-import java.util.function.Consumer
 
 class DetailFragment : Fragment(), LocationListener {
 
     companion object {
-        private val REQUEST_LOCATION_PERMISSION = 100
+        private const val REQUEST_LOCATION_PERMISSION = 100
+        private const val REQUEST_TURN_DEVICE_LOCATION_ON = 1002
+
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private val locationManager by lazy {
-        requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    }
+
+
+    private var snackbar: Snackbar? = null
 
 
 
-    private val viewModel: RepresentativeViewModel by viewModels()
+    private val viewModel = RepresentativeViewModel()
     private lateinit var binding: FragmentRepresentativeBinding
     private lateinit var adapter: RepresentativeListAdapter
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_representative, container, false)
+
+        binding = FragmentRepresentativeBinding.inflate(inflater)
 
         adapter = RepresentativeListAdapter(RepresentativeListener {
         })
@@ -102,7 +101,8 @@ class DetailFragment : Fragment(), LocationListener {
         })
 
         viewModel.responseError.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+            snackbar = Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG)
+            snackbar!!.show()
         })
 
         viewModel.addressInputMutableLiveData.observe(viewLifecycleOwner, Observer {
@@ -122,12 +122,24 @@ class DetailFragment : Fragment(), LocationListener {
         })
     }
 
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_TURN_DEVICE_LOCATION_ON -> {
+                getLocation()
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getLocation()
         } else {
-             val snackbar = Snackbar.make(binding.root, "You need to grant location permission in order to select the location", Snackbar.LENGTH_INDEFINITE)
+             snackbar = Snackbar.make(binding.root, "You need to grant location permission in order to select the location", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Settings") {
                     if (isAdded) {
                         startActivity(Intent().apply {
@@ -137,7 +149,7 @@ class DetailFragment : Fragment(), LocationListener {
                         })
                     }
                 }
-            snackbar.show()
+            snackbar!!.show()
         }
     }
 
@@ -147,8 +159,9 @@ class DetailFragment : Fragment(), LocationListener {
             getLocation()
             true
         } else {
-            Snackbar.make(requireView(),
-                "Please allow location permission", Snackbar.LENGTH_LONG ).show()
+            snackbar = Snackbar.make(requireView(),
+                "Please allow location permission", Snackbar.LENGTH_LONG )
+            snackbar!!.show()
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION),
@@ -169,7 +182,7 @@ class DetailFragment : Fragment(), LocationListener {
             .addOnCompleteListener(OnCompleteListener<Location?> { task ->
                 val location: Location? = task.getResult()
                 if (location != null) {
-                    val address = geoCodeLocation(location)
+                    geoCodeLocation(location)
 
                 } else {
                     AlertDialog.Builder(requireContext())
@@ -184,28 +197,12 @@ class DetailFragment : Fragment(), LocationListener {
     }
 
 
-    @SuppressLint("MissingPermission")
-    @Suppress("DEPRECATION")
-    private fun moveToCurrentLocation(provider: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (isPermissionGranted()) {
-                locationManager.getCurrentLocation(provider, null, requireContext().mainExecutor, Consumer {
-                   Log.i("UserLocation",it.toString())
-                    geoCodeLocation(it)
-                })
-            }
-        } else {
-            locationManager.requestSingleUpdate(provider, this, Looper.getMainLooper())
-        }
-    }
 
     private fun geoCodeLocation(location: Location): Address {
         val geocoder = Geocoder(context, Locale.getDefault())
         return geocoder.getFromLocation(location.latitude, location.longitude, 1)
             .map { address ->
                 viewModel.getGeoLocation(Address(line1 = address.thoroughfare, line2 = address.subThoroughfare, line3= null, locationName = null, city = address.locality, state= address.adminArea, zip = address.postalCode))
-
-                Log.i("address : ",address.toString())
                 Address(line1 = address.thoroughfare, line2 = address.subThoroughfare, line3= null, locationName = null, city = address.locality, state= address.adminArea, zip = address.postalCode)
 
             }
@@ -222,4 +219,8 @@ class DetailFragment : Fragment(), LocationListener {
     }
 
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        snackbar?.dismiss()
+    }
 }

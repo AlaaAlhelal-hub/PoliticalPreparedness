@@ -12,14 +12,15 @@ import kotlinx.coroutines.launch
 
 class RepresentativeViewModel: ViewModel() {
 
+    var addressInputMutableLiveData = MutableLiveData<Address>().apply {
+        value = Address()
+    }
 
     private var _representatives = MutableLiveData<List<Representative>>()
     val representatives : LiveData<List<Representative>>
         get() = _representatives
 
-    val addressInputMutableLiveData = MutableLiveData<Address>().apply {
-        value = Address()
-    }
+
     private val addressInput: LiveData<Address>
         get() = addressInputMutableLiveData
 

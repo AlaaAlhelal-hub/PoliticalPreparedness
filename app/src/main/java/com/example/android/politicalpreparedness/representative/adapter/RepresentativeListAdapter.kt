@@ -99,7 +99,7 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): Re
 
 class RepresentativeDiffCallback: DiffUtil.ItemCallback<Representative>(){
     override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.office.division.id == newItem.office.division.id
     }
 
     override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
